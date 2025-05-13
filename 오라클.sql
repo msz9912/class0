@@ -16,6 +16,7 @@ order by hiredate asc;
 select * from emp
 order by ename desc;
 
+-- 부서번호로 오름차순, 겹치면 sal 내림차순
 select * from emp
 order by deptno asc, sal desc;
 -- deptno asc, sal desc; 이 상황에서 연봉이 같으면 사원번호 내림차순 정렬
