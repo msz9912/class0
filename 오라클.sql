@@ -90,3 +90,75 @@ select * from emp where deptno in ( 10, 20 );
 -- 부서번호 10 또는 20이 아닌 사원만 출력하시오
 select * from emp where deptno not in ( 10, 20 );
 
+-
+select *
+    from emp
+where deptno in ( 10 , 20 );
+
+select *
+    from emp
+    where sal >= 2500
+    and job = 'ANALYST';
+    
+select * from emp where deptno = 20
+or job = 'SALESMAN';
+
+select * from emp where empno = 7499 and deptno = 30;
+
+select * from emp where empno = 7782;
+
+select * from emp order by empno desc;
+
+select * from emp order by empno;
+
+select * from emp where deptno = 10 or deptno = 20;
+-
+
+--1. 부서번호 10번인 사람들을 출력하시오
+select * from emp where deptno = 10;
+
+--2. 부서번호 10번이 아닌 사람들을 출력하시오
+select * from emp where not deptno = 10;
+select * from emp deptno != 10;
+select * from not (deptno = 10);
+select * from emp deptno <> 10;
+
+--3. 급여가 3000 이상인 사람들을 출력하시오
+select * from emp where sal >= 3000;
+
+--4. 급여가 1500~3000 사이(포함)의 사람들을 출력하시오
+select * from emp where sal >= 1500 and sal <= 3000;
+
+--5. 부서벉호 10번인 사람 중 급여 2000 이상인 사람을 출력하시오
+select * from emp where deptno = 10 and sal >= 2000;
+
+--6. 부서번호 30번 중 1500~3000 사이(미포함)인 사람을 출력하시오
+select * from emp where deptno = 30 and sal > 1500 and sal < 3000;
+
+--7. 부서번호 30번 중 1500~3000 사이(미포함)인 사람을 연봉이 작은 순으로 출력, 연봉이 같은 경우 이름이 빠른 순으로 출력하시오
+select * from emp where deptno = 30 and ( sal > 1500 and sal < 3000)
+order by sal, ename;
+
+--8. 부서번호 20,30번 중 1500~3000 사이(미포함)인 사람을 연봉이 작은 순으로 출력, 연봉이 같은 경우 이름이 빠른 순으로 출력하시오
+-- 같은 컬럼이 = 과 or로 연결되어 있는 경우 IN으로 변경할 수 있다
+select * from emp where deptno in ( 20, 30 )
+and ( sal > 1500 and sal < 3000 )
+order by sal, ename;
+
+--9. 부서번호가 20 또는 30이고 급여가 1500 이상인 직원의 이름과 급여를 급여 오름차순으로 출력하시오
+select * from emp where deptno in ( 20, 30 )
+and sal > 1500
+order by sal;
+
+-- between
+select * from emp where sal between 2000 and 3000;
+select * from emp where sal between 2000 and 3000 and deptno = 20;
+
+select * from emp where sal between 2000 and 3000;
+select * from emp where sal not between 2000 and 3000;
+
+-- 2000 초과, 3000 미만
+select * from emp where sal between 2000 and 3000
+and sal != 2000
+and sal != 3000;
+
