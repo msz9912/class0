@@ -162,3 +162,133 @@ select * from emp where sal between 2000 and 3000
 and sal != 2000
 and sal != 3000;
 
+-- like
+-- 첫번째 상관없음
+-- 두번째 무조건 L
+-- 그 이후 상관없음
+select * from emp where ename like 'S%';
+select * from emp where ename like '_L%';
+select * from emp where ename like '%AM%';
+select * from emp where ename like '%A%';
+select * from emp where ename not like '%A%';
+select * from emp where ename like '%A$S%' or ename like 'S%A%';
+select * from emp where ename like '%A%'; or ename like '%A%';
+
+-- null
+select * form emp
+where comm > 400;
+
+select * from emp
+where comm is null;
+
+select * from emp
+where comm is not null;
+
+-- union
+select * from emp where deptno = 10;
+select * from emp where deptno = 20;
+
+select * from emp where deptno = 10
+union
+select * from emp where deptno = 20;
+
+select * from emp where deptno = 10
+union
+select * from emp where deptno = 10;
+
+-- union all
+select * from emp where deptno = 10
+union all
+select * from emp where deptno = 10;
+
+select empno from emp
+union all
+select sal from emp;
+
+-- Q2. 131p
+select empno, ename, job, sal, deptno from emp
+where deptno = 30
+and job in ('SALESMAN');
+
+-- Q5. 131p
+-- 이름, 번호, 급여, 부서 출력, 이름에 E 포함, 부서 30, 급여 1000~2000가 아닌 !
+select ename, empno, sal, deptno from emp
+where ename like '%E%'
+and deptno = 30
+and sal not between 1000 and 2000;
+
+select ename, empno, sal, deptno
+from emp
+where
+    ename like '%E%'
+    and deptno = 30
+    and not (sal >= 1000 and sal <= 2000); 
+    
+select ename, empno, sal, deptno
+from emp
+where
+    ename like '%E%'
+    and deptno = 30
+    and sal != 1000;
+   
+-- Q6. 131p
+-- 추가수당 null, mgr null이 아닌, 직책은 m,c 이름에 두번째 글씨가 L이 아닌 !
+select * from emp where ( comm is null and job in ( 'MANAGER', 'CLERK' ))
+and ename not like '_L%';
+
+select * from emp
+where
+    comm is null
+    and mgr is not null
+    and job in ('MANAGER', 'CLERK')
+    and ename not like '_L%';
+
+-- upper, lower
+select ename, upper(ename), lower(ename) from emp;
+
+select ename from emp
+where lower(ename) like lower('%aM%');
+
+select upper('aBc') from dual;
+select upper('aBc'), lower ('aBc') from dual;
+select upper('aBc'), lower ('aBc'), upper(lower('aBc')) from dual;
+select * from emp where upper(ename) like upper('%SCOTT%');
+
+-
+select ename, length(ename) from emp;
+
+select ename from emp
+where length(ename) = 5;
+
+select * from emp
+where length(ename) = 5;
+-
+
+select lengthb('a'), lengthb('한') from dual;
+
+desc emp;
+
+select ename, empno, sal, deptno from emp
+where deptno = 30 and sal not between 1000 and 2000;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from emp
+where comm null
+
+
+
+
+
+
