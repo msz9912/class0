@@ -24,7 +24,7 @@ order by deptno asc, sal desc;
 select * from emp
 order by deptno asc, sal desc, empno desc;
 
--
+--
 select distinct deptno from emp;
 
 select * from emp
@@ -34,7 +34,7 @@ select *
 from emp
 where deptno = 30
 order by sal;
--
+--
 
 -- sal이 1600인 사람만 출력
 select * from emp where sal = 1600;
@@ -90,7 +90,7 @@ select * from emp where deptno in ( 10, 20 );
 -- 부서번호 10 또는 20이 아닌 사원만 출력하시오
 select * from emp where deptno not in ( 10, 20 );
 
--
+--
 select *
     from emp
 where deptno in ( 10 , 20 );
@@ -112,7 +112,7 @@ select * from emp order by empno desc;
 select * from emp order by empno;
 
 select * from emp where deptno = 10 or deptno = 20;
--
+--
 
 --1. 부서번호 10번인 사람들을 출력하시오
 select * from emp where deptno = 10;
@@ -210,6 +210,19 @@ select empno, ename, job, sal, deptno from emp
 where deptno = 30
 and job in ('SALESMAN');
 
+-- 부서 10번을 사원번호 내림차순으로 desc 정렬하여 출력하시오
+select * from emp where deptno = 10 order by deptno desc;
+
+-- 부서 20번을 사원번호 오름차순으로 asc 정렬하여 출력하시오
+select * from emp where deptno = 20 order by deptno asc;
+
+-- 부서 30번을 사원번호 오름차순으로 asc 정렬하여 출력하시오
+select * from emp where deptno = 30 order by deptno asc;
+
+-- 아직 안 배운 기술로 order by 적용하는 가능
+select * from (
+    delect * from emp ~
+    
 -- Q5. 131p
 -- 이름, 번호, 급여, 부서 출력, 이름에 E 포함, 부서 30, 급여 1000~2000가 아닌 !
 select ename, empno, sal, deptno from emp
@@ -254,7 +267,7 @@ select upper('aBc'), lower ('aBc') from dual;
 select upper('aBc'), lower ('aBc'), upper(lower('aBc')) from dual;
 select * from emp where upper(ename) like upper('%SCOTT%');
 
--
+--
 select ename, length(ename) from emp;
 
 select ename from emp
@@ -262,33 +275,167 @@ where length(ename) = 5;
 
 select * from emp
 where length(ename) = 5;
--
+--
 
 select lengthb('a'), lengthb('한') from dual;
 
 desc emp;
 
-select ename, empno, sal, deptno from emp
-where deptno = 30 and sal not between 1000 and 2000;
+--substr
+select job, substr(job, 1, 2), substr(job, 3, 2), substr(job, 5) from emp;
+
+select job, substr(job, -3, 2) from emp;
+
+select ename, substr(ename, -3, 2) from emp;    !
+
+select ename, substr(ename, -4, 2) from emp;
+
+-- 사원 이름을 두 번째부터 3글자만 출력하시오
+select ename, substr(ename, 2, 3) from emp;
+
+-- 실제 글씨 길이보다 넘어가면 null
+select ename, substr(ename, -30, 2) from emp;
+
+-- 사원 이름의 마지막 3글자만 출력하시오
+select ename, substr(ename, -3, 10) from emp;
+
+select ename, substr(ename, -3) from emp;
+
+select ename, substr(ename, -3, 3) from emp;
+
+select '010-1234-5678' as replace_berore,
+    replace('010-1234-5678', '-', '') as replace_1,
+    replace('010-1234-5678', '-') as replace_2
+    from dual;
+    
+select 'a-b-c',
+    replace('a-b-c', '-', 'g'),
+    replace('a-b-c', '-'),
+    replace('a-b-c', '-', '')
+    from emp;
+    
+-- ename의 E를 '-' 모두 교체
+select ename, replace(ename, 'E', '-') from emp; 
+select ename, replace(ename, 'TT', '-3131351531') from emp;
+
+--
+select ename, replace(ename, 'E', '바보') from emp;
+select job, replace(job, 'A', '메롱') from emp;
+--
+
+-- lpad
+-- 모자르면 채우고, 넘어가면 자르고
+select lpad(ename, 10, '+') from emp;
+select lpad(ename, 10, ' ') from emp;
+select lpad(ename, 5, '+') from emp;
+
+-- rpad
+-- 모자르면 채우고, 넘어가면 자르고
+select rpad(ename, 10, '+') from emp;
+
+-- 문제 1.
+-- ename 앞에 두글자만 출력하시오
+select ename, substr (ename, 1, 2) from emp;
+
+select ename, substr(ename, 1, 2), rpad(ename, 2) from emp;
 
 
+-- 문제 2.
+-- 앞에 두 글자만 원본을 출력하고 나머지는 4개의 *로 표시하시오
+select rpad(substr (ename, 1, 2), 6, '*') from emp;
+
+-- 문제 3.
+-- 사원 이름 두 글자만 보이고 나머지는 *로. 단, 원래 이름 길이 만큼 표시하시오
+-- 예 : WA**, SM***
+select rpad(substr (ename, 1, 2), length(ename), '*') from emp;
+
+select
+    ename,
+    rpad(
+        substr(ename, 1, 2),
+        length(ename), 
+        '*'
+    )
+from emp;
+
+--
+select lpad(substr (job, 1, 2), length(job), '@') from emp;
 
 
+select lpad(substr (ename, -2), length(ename), '*') from emp;
+--
 
+-- 심화 문제
+-- job을 총 20자 중 가운데 정렬하시오
 
+-- trim
+select 'ab' || 'cd' || 'fd' from dual;
+select empno || ' : ' || ename from emp;
+select '  ab c  ', trim('  ab c  ') from dual;
 
+-- round
+select
+    round(14.46), -- 하나만 입력하면 소수점 첫 째자리 반올림 
+    round(14.46, 1), -- 소수점 두 번째 자리 1
+    round(14.46, -1) -- 음수일 때 정수로 거슬러 올라감
+from dual;
 
+select
+    trunc(14.46),
+    trunc(14.46, 1),
+    trunc(14.46, -1),
+    trunc(-14.46)
+from dual;
 
+select
+    ceil(3.14),
+    floor(3.14),
+    ceil(-3.14),
+    floor(-3.14),
+    trunc(-3.14)
+from dual;
 
+select 7 / 3 from dual;
+select 7 / 0 from dual;
+select 6 / 2 from dual;
+select 54 / 7 from dual;
+select 193 / 8 from dual;
+select 532 / 4 from dual;
 
+select mod (7, 3) from dual;
+select mod (8, 3) from dual;
+select mod(6, 3), mod(7, 3), mod(8, 3), mod(9, 3)from dual;
+select mod (684689, 3) from dual;
+select mod (9.3, 3) from dual;
 
+select sysdate from dual;
+select sysdate-15 from dual;
+select sysdate+15 from dual;
 
+select empno, empno + '1000' from emp;
+select empno, empno + 'abcd' from emp;
+select 'a' + 'b' from dual;
+select 'a' || 'b' from dual;
+select 'a' || 123 from dual;
+
+select to_char(sysdate, 'yyyy"년" mm"월" dd"일" hh24"시" mi"분" ss"초"') from dual;
+
+select to_char(sysdate, 'yy/mm/dd') from dual;
+
+select to_char(hiredate, 'yyyy"년" mm"월" dd"일" hh24"시" mi"분" ss"초"') from emp;
+
+select to_date('2025-05-15', 'yyyy-mm-dd')-to_date('2025-05-13', 'yyyy-mm-dd')from dual;
+select to_date('2025-05-13', 'yyyy-mm-dd') from dual;
+
+select * from emp;
 
 select * from emp
-where comm null
+where hiredate > to_date('1981-06-01', 'yyyy-mm-dd');
 
+select * from emp
+where hiredate > '81-06-01';
 
-
-
-
-
+select
+    sal *12 + comm,
+    sal *12 + nvl(comm, 0)
+from emp;
