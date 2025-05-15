@@ -439,4 +439,3 @@ select
     sal *12 + comm,
     sal *12 + nvl(comm, 0)
 from emp;
-
