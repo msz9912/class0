@@ -361,7 +361,6 @@ from emp;
 --
 select lpad(substr (job, 1, 2), length(job), '@') from emp;
 
-
 select lpad(substr (ename, -2), length(ename), '*') from emp;
 --
 
@@ -439,3 +438,191 @@ select
     sal *12 + comm,
     sal *12 + nvl(comm, 0)
 from emp;
+
+--
+select to_date('2025-04-13', 'yyyy-mm-dd')from dual;
+select to_date('2025-05-13', 'yyyy-mm-dd')from dual;
+select to_date('2025-05-14', 'yyyy-mm-dd')from dual;
+select to_date('2025-05-15', 'yyyy-mm-dd')from dual;
+select to_date('2025-05-16', 'yyyy-mm-dd')from dual;
+--
+
+-- 각 사원의 연봉을 출력하고
+-- 월급 * 12 + comm
+-- ename, total_pay 출력하시오
+select ename, sal * 12 + nvl(comm,0) as total_pay from emp;
+
+--
+select comm, nvl(comm,4657) from emp;
+
+--
+
+-- decode
+select empno, ename, job, sal,
+    decode (job,
+            'MANAGER', sal*1.1,
+            'SALESMAN', sal*1.05,
+            'ANALYST', sal,
+            sal*1.03) as upsal
+from emp;
+
+-- case문
+
+select empno, ename, job, sal,
+    case job
+        when 'MANGER' then sal*1+1
+        when 'SALEMAN' then sal*1.05
+        when 'ANALYST' then sal
+        else sal*1.03
+    end as upsal
+    from emp;
+
+-- nvl 사용하지 않고
+-- decode, case로 nvl이랑 동일한 결과 출력하시오
+select nvl(comm, -1),
+decode (comm, null, -1, comm) as decode,
+case comm when null then -1 else comm
+end as comm from emp;
+
+-- where comm = null
+select comm,
+    case
+        when comm is null  then '해당 없음'
+        when comm is null  then 'X  '
+        when comm = 0 then '0원'
+        when comm > 0 then '수당 :' || comm
+    end as end
+from emp;
+
+select empno, ename, comm,
+    case
+     when comm is null then '해당 없음'
+     when comm = 0 then '수당없음'
+     when comm > 0 then '수당 :' || comm
+    end as comm_text
+    from emp;
+ 
+-- Q1. 179p
+-- 사원 이름 5글자 이상 6글자 미만 사원 출력
+-- masking_empno열에 사원 번호 앞 두 자리 외 뒷자리 *로 출력
+-- masking_ename열에 사원 이름 첫 글자 빼고 나머지 *로 출력
+select empno, rpad(substr (empno, 1, 2), length(empno), '*') as MASKING_EMPNO, 
+       ename, rpad(substr (ename, 1, 1), length(ename), '*') as MASKING_ENAME
+       from emp where Length(ename) >=5 and Length(ename) <6;
+
+-- Q2. 179p
+-- 월 평균 근무일 수 21.5일
+-- 하루 근무 시간 8시간으로 보았을 때, 사원의 하루 급여와 시급을 계산하여 출력
+-- 단, 하루 급여는 소수 셋째 자리에서 버리고, 시급은 소수 둘째 자리에서 반올림
+select empno, ename, sal,
+trunc(sal/21.5, 2),
+round(sal/21.5/8, 1)
+from emp;
+ !
+-- Q3. 179p
+-- 직속상관의 사원 번호를 다음과 같은 조건 기준으로 변환해 CHG_MGR 열에 출력
+select empno, ename, mgr,
+case when mgr is null then 0000
+     when mgr       75 then 5555
+     when mgr is null then 6666
+     when mgr is null then 7777
+     when mgr is null then 8888
+end as chg_mgr from emp;
+
+
+select empno, ename, mgr,
+case when mgr is null then 0000
+     when mgr is null then 5555
+     when mgr is null then 6666
+     when mgr is null then 7777
+     when mgr is null then 8888
+end as chg_mgr from emp;
+
+
+
+select
+    case
+        when substr(mgr, 2, 1) in ('5', '6', '7', '8')
+            then lpad(substr(mgr, 2, 1), 4, substr(mgr, 2, 1))
+        else ''|| mgr
+    end
+
+    lpad(sybstr(mgr, 2, 1), 4, sybstr(mgr, 2, 1)) from emp;
+
+    
+!
+
+
+
+-- sum
+select sum(sal) from emp;
+select sum(sal) from emp where deptno = 10;
+select sal,sum(sal) from emp;
+select sum(comm) from emp;
+
+-- count
+select count(*) from emp;
+select count(*) sum(sal) from emp;
+select count(sal), count(comm) from emp;
+
+
+--max, min
+select max(sal)
+from emp
+where deptno = 10;
+
+select min(sal)
+from emp
+where deptno = 10;
+
+-- 이름에 a가 들어가는 사람은 몇 명
+select * from emp
+where ename like '%A%'; 
+
+--avg
+select avg (sal) from emp;
+
+-- 다중행 함수(집계 함수)는 where에서 사용할 수 없다
+select * from emp where sal > avg(sal);
+
+-- grop by
+select deptno
+from emp grop by deptno;
+
+select deptno, sum(sal), count(*)
+from emp group by deptno;
+
+select job from emp
+group by job;
+
+select deptno, job
+from emp
+group by deptno, job;
+
+select deptno, job, count(*), ename
+from emp
+group by deptno, job, ename;
+
+
+select job from emp where deptno = 10
+group by job;
+
+select job from emp where deptno = 10
+group by job order by job desc;
+
+select job from emp group by deptno, job having deptno = 10;
+
+select job, deptno, avg(sal) from emp group by deptno, job;
+
+select job,
+deptno, avg(sal)
+from emp
+group by deptno, job
+having avg(sal) > 2000;
+
+select job, count(*) as cnt
+from emp
+where sal > 1000 -- and cnt >= 3 -- and count (*) >= 3
+group by job
+having count(*) >= 3
+order by cnt desc;
