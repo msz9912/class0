@@ -366,6 +366,11 @@ select lpad(substr (ename, -2), length(ename), '*') from emp;
 
 -- 심화 문제
 -- job을 총 20자 중 가운데 정렬하시오
+select
+lpad(rpad(job, (length(job) + 20) / 2, '*'), 20, '*')
+as job_centered
+from
+    emp;
 
 -- trim
 select 'ab' || 'cd' || 'fd' from dual;
@@ -566,7 +571,7 @@ select count(*) sum(sal) from emp;
 select count(sal), count(comm) from emp;
 
 
---max, min
+-- max, min
 select max(sal)
 from emp
 where deptno = 10;
@@ -579,7 +584,7 @@ where deptno = 10;
 select * from emp
 where ename like '%A%'; 
 
---avg
+-- avg
 select avg (sal) from emp;
 
 -- 다중행 함수(집계 함수)는 where에서 사용할 수 없다
@@ -626,3 +631,114 @@ where sal > 1000 -- and cnt >= 3 -- and count (*) >= 3
 group by job
 having count(*) >= 3
 order by cnt desc;
+
+--
+select * from dept;
+--
+
+-- join
+select * from emp, dept
+order by empno;
+
+select * from emp, dept
+where emp.deptno = dept.deptno
+order by empno;
+
+select * from emp e, dept d
+where e.deptno = d.deptno
+order by empno;
+
+-- select ename
+-- from emp e, dept d
+-- where e. deptno = d.deptno;
+select ename
+from emp e, dept d
+where e. deptno = d.deptno;
+
+select * from salgrade;
+
+select * from emp e, salgrade s
+where e.sal >= s.losal and e.sal < s.hisal;
+
+-- 총 13개 나옴
+select e1.empno, e1.ename, e1.mgr, e2.empno, e2.ename
+from emp e1, emp e2
+where e1.mgr = e2.empno;
+
+select count (*)
+from emp e1, emp e2
+where e1.mgr = e2.empno;
+
+select e1.empno, e1.ename, e1.mgr,
+       e2.empno mgr_empno
+    from emp e1, emp e2
+    where e1.mgr = e2.empno(+)
+    order by e1.empno;
+
+-- join ~ using
+select e.empno, e.ename, e.job, e.mgr, e.hiredate, e.sal, e.comm,
+deptno, d.dname, d.loc
+from emp e join dept d using (deptno)
+where sal >= 3000
+order by deptno, e.empno;
+
+-- join ~ on
+select e.empno, e.ename, e.job, e.mgr, e.hiredate, e.sal, e.comm,
+e.deptno, d.dname, d.loc
+from emp e join dept d on (e.deptno = d.deptno)
+where sal <= 3000
+order by deptno, empno;
+
+select * from emp e1 join emp e2 on(e1.mgr = e2.empno);
+
+-- lefr outer
+select * from emp e left outer join dept d on(e.deptno = d.deptno);
+
+-- right outer
+select * from emp e1 right outer join emp e2 on(e1.mgr = e2.empno);
+
+-- full outer
+select * from emp e1 full outer join emp e2 on(e1.mgr = e2.empno);
+
+-- Q1. 급여가 2000을 초과한 사원의 부서 정보, 사원 정보를 다음과 같이 출력하시오
+-- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from emp e join dept d on (e.deptno = d.deptno)
+where sal > 2000
+order by d.deptno;
+
+-- Q2. 부서별 평균 급여, 최대 급여, 최소 급여, 사원 수를 출력하시오
+-- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
+select d.deptno, d.dname, trunc(avg(e.sal),0) AVG_SAL, max(e.sal) MAX_SAL, min(e.sal), count(e.deptno) CNT
+from dept d join emp e on (e.deptno = d.deptno)
+group by d.deptno, d.dname
+order by d.deptno;
+
+-- Q3. 모든 부서 정보와 사원 정보를 다음과 같이 부서 번호, 사원 이름순으로 정렬하여 출력하시오
+-- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
+-- 
+select d.deptno, d.dname, e.empno, e.ename, e.job, e.sal
+from dept d left outer join emp e on(e.deptno = d.deptno)
+order by d.deptno;
+
+-- Q4. 모든 부서 정보, 사원 정보, 급여 등급 정보, 각 사원의 직속상관 정보를 부서 번호, 사원 번호 순서로 정렬하여 출력하시오
+-- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
+select d.deptno, d.dname, e.*, s.*
+from dept d left outer join emp e on(e.deptno = d.deptno)
+join salgrade s on (e.sal >= s.losal and e.sal < s.hisal)
+join emp mgr on e.mgr = mgr.empno
+order by d.deptno, d.dname;
+
+
+select d.deptno, d.dname, e.*, s.*
+from dept d left outer join emp e on(e.deptno = d.deptno)
+join salgrade s on (e.sal between s.losal and s.hisal)
+join emp mgr on e.mgr = mgr.empno
+order by d.deptno, e.ename;
+
+
+select e1.empno, e1.ename, e1.mgr,
+       e2.empno mgr_empno
+    from emp e1, emp e2
+    where e1.mgr = e2.empno(+)
+    order by e1.empno;
