@@ -368,7 +368,7 @@ select lpad(substr (ename, -2), length(ename), '*') from emp;
 -- job을 총 20자 중 가운데 정렬하시오
 select
 lpad(rpad(job, (length(job) + 20) / 2, '*'), 20, '*')
-as job_centered
+as job_centered 
 from
     emp;
 
@@ -459,7 +459,6 @@ select ename, sal * 12 + nvl(comm,0) as total_pay from emp;
 
 --
 select comm, nvl(comm,4657) from emp;
-
 --
 
 -- decode
@@ -700,45 +699,216 @@ select * from emp e1 right outer join emp e2 on(e1.mgr = e2.empno);
 -- full outer
 select * from emp e1 full outer join emp e2 on(e1.mgr = e2.empno);
 
--- Q1. 급여가 2000을 초과한 사원의 부서 정보, 사원 정보를 다음과 같이 출력하시오
+-- Q1. 226p
+-- 급여가 2000을 초과한 사원의 부서 정보, 사원 정보를 다음과 같이 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
-select d.deptno, d.dname, e.empno, e.ename, e.sal
-from emp e join dept d on (e.deptno = d.deptno)
-where sal > 2000
-order by d.deptno;
+select e.deptno, d.dname, e.empno, e.ename, e.sal
+from emp e, dept d
+where e.deptno = d.deptno
+and sal > 2000
+order by d.deptno, dname;
 
--- Q2. 부서별 평균 급여, 최대 급여, 최소 급여, 사원 수를 출력하시오
+-- Q2. 226p
+-- 부서별 평균 급여, 최대 급여, 최소 급여, 사원 수를 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
 select d.deptno, d.dname, trunc(avg(e.sal),0) AVG_SAL, max(e.sal) MAX_SAL, min(e.sal), count(e.deptno) CNT
 from dept d join emp e on (e.deptno = d.deptno)
 group by d.deptno, d.dname
 order by d.deptno;
 
--- Q3. 모든 부서 정보와 사원 정보를 다음과 같이 부서 번호, 사원 이름순으로 정렬하여 출력하시오
+select deptno, floor(avg(sal)), max(sal), min(sal), count(*)
+from emp e left outer join dept d using (deptno)
+group by deptno order by deptno;
+
+-- Q3. 226p
+-- 모든 부서 정보와 사원 정보를 다음과 같이 부서 번호, 사원 이름순으로 정렬하여 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
--- 
 select d.deptno, d.dname, e.empno, e.ename, e.job, e.sal
 from dept d left outer join emp e on(e.deptno = d.deptno)
 order by d.deptno;
 
--- Q4. 모든 부서 정보, 사원 정보, 급여 등급 정보, 각 사원의 직속상관 정보를 부서 번호, 사원 번호 순서로 정렬하여 출력하시오
--- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
-select d.deptno, d.dname, e.*, s.*
-from dept d left outer join emp e on(e.deptno = d.deptno)
-join salgrade s on (e.sal >= s.losal and e.sal < s.hisal)
-join emp mgr on e.mgr = mgr.empno
-order by d.deptno, d.dname;
-
-
-select d.deptno, d.dname, e.*, s.*
-from dept d left outer join emp e on(e.deptno = d.deptno)
-join salgrade s on (e.sal between s.losal and s.hisal)
-join emp mgr on e.mgr = mgr.empno
+select d.deptno, dname, empno, ename, job, sal
+from dept d left outer join emp e on d.deptno = e.deptno
 order by d.deptno, e.ename;
 
+-- Q4. 227p
+-- 모든 부서 정보, 사원 정보, 급여 등급 정보, 각 사원의 직속상관 정보를 부서 번호, 사원 번호 순서로 정렬하여 출력하시오
+-- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
+select d.deptno, d.dname, e.empno, e.ename, e.mgr,
+       e.deptno as deptno_1, s.losal, s.hisal, s.grade,
+       e2.empno as mgr_empno, e2.ename as mgr_ename
+from dept d
+    left outer join emp e on (d.deptno = e.deptno)
+    left outer join salgrade s on (e.sal >= s.losal
+                                   and e.sal <= s.hisal)
+    left outer join emp e2 on (e.mgr = e2.empno)
+order by d.deptno, e.empno;
 
-select e1.empno, e1.ename, e1.mgr,
-       e2.empno mgr_empno
-    from emp e1, emp e2
-    where e1.mgr = e2.empno(+)
-    order by e1.empno;
+-- 퀴즈
+-- 각 부서별로 급여가
+-- 가장 높은 사원, 가장 낮은 사원의
+-- 급여 차이를 출력하시오
+select deptno, max(sal) - min(sal) from emp
+group by deptno;
+
+select deptno, max(sal), min(sal), max(sal) - min(sal) 급여차이 from emp group by deptno;
+
+-- 심화 전에 했던 거
+-- job을 총 20자 중 가운데 정렬하시오
+-- 전체 길이의 반 - 글씨 길이의 반
+-- 먼저 왼쪽 채우고, 오른쪽 채우고
+select
+lpad(rpad(job, (length(job) + 20) / 2, '*'), 20, '*')
+as job_centered 
+from
+    emp;
+
+select
+job,
+lpad(job, (length(job)/2) + 20/2, '-'),
+rpad(lpad(job, (length(job)/2 + 20/2), '-'), 20, '-')
+from emp;
+
+-- subquery
+select * from emp where sal >
+(select sal from emp where ename = 'JONES');
+select * from emp where sal > (2975);
+
+select * from emp where hiredate <
+(select hiredate from emp where ename = 'SCOTT');
+
+-- emp 평균 월급보다 이상 받는 사람 출력
+select * from emp where sal
+>= (select avg(sal) from emp);
+
+select max(sal) from emp
+group by deptno;
+
+select * from emp
+where sal in (select max(sal) from emp
+group by deptno);
+
+
+select * from emp, dept where emp.deptno = dept.deptno;
+
+-- from절에서의 서브쿼리
+select *
+  from (select * from emp where deptno = 10) e10,
+dept d
+ where e10.deptno = d.deptno;
+ 
+
+-- job별로 group by having
+select *
+  from(
+select job, count(*) cnt
+  from emp
+ group by job
+)
+where cnt >= 3;
+
+select *
+  from (
+ select rownum rn, emp.*
+   from emp
+)
+  where rn = 3 and  rn < 6;
+
+select *
+  from (
+select rownum rn, emp.*
+  from emp
+)
+ where rn = 3 and  rn < 6;
+
+select rownum rn, emp.*
+  from emp
+ order by sal desc;
+
+select rownum rn, e.*
+  from (
+select emp.*
+  from emp
+ order by sal desc
+    ) e;
+
+select *
+  from (
+select rownum rn, e.*
+  from (
+select emp.*
+  from emp
+ order by sal desc
+    ) e
+)
+ where rn >= 2 and rn <= 4;
+
+with e10 as (
+select * from emp where deptno = 10
+)
+select ename from e10;
+ 
+select empno, ename, job, sal,(
+select grade
+from salgrade
+where e.sal between losal and hisal) as salgrade,
+deptno,
+(select dname
+from dept
+where e.deptno = dept.deptno) as dname
+from emp e;
+
+-- Q1. 249p
+-- 전체 사원 중 ALLEN과 같은 직책인 사원의 사원 정보, 부서 정보를 다음과 같이 출력하는 SQL 구문을 작성하시오
+select e.job,
+       e.empno,
+       e.ename,
+       e.sal,
+       d.deptno,
+       d.dname           
+  from emp e, dept d
+ where job =
+(select job from emp
+ where ename = 'ALLEN') and e.deptno = d.deptno
+ order by e.sal desc, e.ename;
+
+-- Q2. 249p 
+-- 전체 사원의 평균 급여보다 많이 받는 사원의 사원 정보, 부서 정보, 급여 등급 정보를
+-- 출력하는 SQL 구문을 작성하시오
+-- 단, 출력할 때 급여가 많은 순으로 정렬하되 같다면 사원 번호를 기준으로 오름차순으로 정렬하시오
+select e.empno,
+       e.ename,
+       d.dname,
+       e.hiredate,
+       d.loc,
+       e.sal,(
+select grade
+  from salgrade
+ where e.sal between losal and hisal) as GRADE
+  from emp e, dept d
+ where sal >= (
+select avg(sal) from emp) and e.deptno = d.deptno
+ order by e.sal desc, e.empno;
+
+-- Q3. 249p 
+-- 10번 부서에 근무하는 사원 중 30번 부서에 없는 직책인 사원의 사원 정보, 부서 정보를
+-- 다음과 같이 출력하는 SQL 구문을 작성하시오
+select * deptno
+not 10, 30);
+
+-- Q4. 249p 
+-- 직책이 SALESMAN인 사람의 최고 급여보다 많이 받는 사원의 사원 정보, 급여 등급 정보를
+-- 오른쪽과 같이 출력하는 SQL 구문을 작성하시오
+-- 단, 서브쿼리를 활용할 때 다중행 함수를 사용하는 방법과 사용하지 않는 2가지 방법으로
+-- 사원 번호 기준 오름차순으로 정렬하시오
+select e.empno,
+       e.ename,
+       e.sal, (
+select grade
+  from salgrade
+ where e.sal between losal and hisal) as GRADE
+  from emp e
+ where sal > (
+select max(sal) from emp
+ where job = 'SALESMAN')
+ order by e.empno asc;
