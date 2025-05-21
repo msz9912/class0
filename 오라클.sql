@@ -463,12 +463,12 @@ select comm, nvl(comm,4657) from emp;
 
 -- decode
 select empno, ename, job, sal,
-    decode (job,
+decode (job,
             'MANAGER', sal*1.1,
             'SALESMAN', sal*1.05,
             'ANALYST', sal,
             sal*1.03) as upsal
-from emp;
+  from emp;
 
 -- case문
 
@@ -492,7 +492,7 @@ end as comm from emp;
 select comm,
     case
         when comm is null  then '해당 없음'
-        when comm is null  then 'X  '
+        when comm is null  then 'X'
         when comm = 0 then '0원'
         when comm > 0 then '수당 :' || comm
     end as end
@@ -677,24 +677,30 @@ select e1.empno, e1.ename, e1.mgr,
 -- join ~ using
 select e.empno, e.ename, e.job, e.mgr, e.hiredate, e.sal, e.comm,
 deptno, d.dname, d.loc
-from emp e join dept d using (deptno)
-where sal >= 3000
-order by deptno, e.empno;
+  from emp e join dept d using (deptno)
+ where sal >= 3000
+ order by deptno, e.empno;
 
 -- join ~ on
 select e.empno, e.ename, e.job, e.mgr, e.hiredate, e.sal, e.comm,
 e.deptno, d.dname, d.loc
-from emp e join dept d on (e.deptno = d.deptno)
-where sal <= 3000
-order by deptno, empno;
+  from emp e join dept d on (e.deptno = d.deptno)
+ where sal <= 3000
+ order by deptno, empno;
 
-select * from emp e1 join emp e2 on(e1.mgr = e2.empno);
+select *
+  from emp e1
+  join emp e2 on(e1.mgr = e2.empno);
 
 -- lefr outer
-select * from emp e left outer join dept d on(e.deptno = d.deptno);
+select *
+  from emp e
+  left outer join dept d on(e.deptno = d.deptno);
 
 -- right outer
-select * from emp e1 right outer join emp e2 on(e1.mgr = e2.empno);
+select *
+  from emp e1
+ right outer join emp e2 on(e1.mgr = e2.empno);
 
 -- full outer
 select * from emp e1 full outer join emp e2 on(e1.mgr = e2.empno);
@@ -703,33 +709,33 @@ select * from emp e1 full outer join emp e2 on(e1.mgr = e2.empno);
 -- 급여가 2000을 초과한 사원의 부서 정보, 사원 정보를 다음과 같이 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
 select e.deptno, d.dname, e.empno, e.ename, e.sal
-from emp e, dept d
-where e.deptno = d.deptno
-and sal > 2000
-order by d.deptno, dname;
+  from emp e, dept d
+ where e.deptno = d.deptno
+   and sal > 2000
+ order by d.deptno, dname;
 
 -- Q2. 226p
 -- 부서별 평균 급여, 최대 급여, 최소 급여, 사원 수를 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
 select d.deptno, d.dname, trunc(avg(e.sal),0) AVG_SAL, max(e.sal) MAX_SAL, min(e.sal), count(e.deptno) CNT
-from dept d join emp e on (e.deptno = d.deptno)
-group by d.deptno, d.dname
-order by d.deptno;
+  from dept d join emp e on (e.deptno = d.deptno)
+ group by d.deptno, d.dname
+ order by d.deptno;
 
 select deptno, floor(avg(sal)), max(sal), min(sal), count(*)
-from emp e left outer join dept d using (deptno)
-group by deptno order by deptno;
+  from emp e left outer join dept d using (deptno)
+ group by deptno order by deptno;
 
 -- Q3. 226p
 -- 모든 부서 정보와 사원 정보를 다음과 같이 부서 번호, 사원 이름순으로 정렬하여 출력하시오
 -- 단, SQL-99 이전 방식과 SQL-99 방식을 각각 사용하여 작성하시오
 select d.deptno, d.dname, e.empno, e.ename, e.job, e.sal
-from dept d left outer join emp e on(e.deptno = d.deptno)
-order by d.deptno;
+  from dept d left outer join emp e on(e.deptno = d.deptno)
+ order by d.deptno;
 
 select d.deptno, dname, empno, ename, job, sal
-from dept d left outer join emp e on d.deptno = e.deptno
-order by d.deptno, e.ename;
+  from dept d left outer join emp e on d.deptno = e.deptno
+ order by d.deptno, e.ename;
 
 -- Q4. 227p
 -- 모든 부서 정보, 사원 정보, 급여 등급 정보, 각 사원의 직속상관 정보를 부서 번호, 사원 번호 순서로 정렬하여 출력하시오
@@ -737,19 +743,19 @@ order by d.deptno, e.ename;
 select d.deptno, d.dname, e.empno, e.ename, e.mgr,
        e.deptno as deptno_1, s.losal, s.hisal, s.grade,
        e2.empno as mgr_empno, e2.ename as mgr_ename
-from dept d
-    left outer join emp e on (d.deptno = e.deptno)
-    left outer join salgrade s on (e.sal >= s.losal
+  from dept d
+  left outer join emp e on (d.deptno = e.deptno)
+  left outer join salgrade s on (e.sal >= s.losal
                                    and e.sal <= s.hisal)
-    left outer join emp e2 on (e.mgr = e2.empno)
-order by d.deptno, e.empno;
+  left outer join emp e2 on (e.mgr = e2.empno)
+ order by d.deptno, e.empno;
 
 -- 퀴즈
 -- 각 부서별로 급여가
 -- 가장 높은 사원, 가장 낮은 사원의
 -- 급여 차이를 출력하시오
 select deptno, max(sal) - min(sal) from emp
-group by deptno;
+ group by deptno;
 
 select deptno, max(sal), min(sal), max(sal) - min(sal) 급여차이 from emp group by deptno;
 
@@ -758,59 +764,56 @@ select deptno, max(sal), min(sal), max(sal) - min(sal) 급여차이 from emp gro
 -- 전체 길이의 반 - 글씨 길이의 반
 -- 먼저 왼쪽 채우고, 오른쪽 채우고
 select
-lpad(rpad(job, (length(job) + 20) / 2, '*'), 20, '*')
-as job_centered 
-from
-    emp;
+  lpad(rpad(job, (length(job) + 20) / 2, '*'), 20, '*') as job_centered 
+  from emp;
 
 select
-job,
-lpad(job, (length(job)/2) + 20/2, '-'),
-rpad(lpad(job, (length(job)/2 + 20/2), '-'), 20, '-')
-from emp;
+   job,
+  lpad(job, (length(job)/2) + 20/2, '-'),
+  rpad(lpad(job, (length(job)/2 + 20/2), '-'), 20, '-')
+  from emp;
 
 -- subquery
-select * from emp where sal >
-(select sal from emp where ename = 'JONES');
+select * from emp where sal > (
+select sal from emp where ename = 'JONES');
 select * from emp where sal > (2975);
 
 select * from emp where hiredate <
 (select hiredate from emp where ename = 'SCOTT');
 
 -- emp 평균 월급보다 이상 받는 사람 출력
-select * from emp where sal
->= (select avg(sal) from emp);
+select * from emp where sal >= (
+select avg(sal) from emp);
 
 select max(sal) from emp
-group by deptno;
+ group by deptno;
 
 select * from emp
-where sal in (select max(sal) from emp
-group by deptno);
+ where sal in (select max(sal) from emp
+ group by deptno);
 
 
 select * from emp, dept where emp.deptno = dept.deptno;
 
 -- from절에서의 서브쿼리
 select *
-  from (select * from emp where deptno = 10) e10,
-dept d
+  from (select * from emp where deptno = 10) e10, dept d
  where e10.deptno = d.deptno;
  
 
 -- job별로 group by having
 select *
-  from(
+  from (
 select job, count(*) cnt
   from emp
  group by job
 )
-where cnt >= 3;
+ where cnt >= 3;
 
 select *
   from (
- select rownum rn, emp.*
-   from emp
+select rownum rn, emp.*
+  from emp
 )
   where rn = 3 and  rn < 6;
 
@@ -843,20 +846,19 @@ select emp.*
 )
  where rn >= 2 and rn <= 4;
 
-with e10 as (
+  with e10 as (
 select * from emp where deptno = 10
 )
 select ename from e10;
  
 select empno, ename, job, sal,(
 select grade
-from salgrade
-where e.sal between losal and hisal) as salgrade,
-deptno,
-(select dname
-from dept
-where e.deptno = dept.deptno) as dname
-from emp e;
+  from salgrade
+ where e.sal between losal and hisal) as salgrade, deptno, (
+select dname
+  from dept
+ where e.deptno = dept.deptno) as dname
+  from emp e;
 
 -- Q1. 249p
 -- 전체 사원 중 ALLEN과 같은 직책인 사원의 사원 정보, 부서 정보를 다음과 같이 출력하는 SQL 구문을 작성하시오
@@ -867,8 +869,8 @@ select e.job,
        d.deptno,
        d.dname           
   from emp e, dept d
- where job =
-(select job from emp
+ where job = (
+select job from emp
  where ename = 'ALLEN') and e.deptno = d.deptno
  order by e.sal desc, e.ename;
 
@@ -884,11 +886,22 @@ select e.empno,
        e.sal,(
 select grade
   from salgrade
- where e.sal between losal and hisal) as GRADE
+ where e.sal between losal
+       and hisal) as GRADE
   from emp e, dept d
  where sal >= (
-select avg(sal) from emp) and e.deptno = d.deptno
+select avg(sal)
+  from emp)
+       and e.deptno = d.deptno
  order by e.sal desc, e.empno;
+
+select empno, ename, (select dname from dept d where e.deptno = d.deptno), siredate,
+(select loc from dept d where e.deptno = d.deptno) loc, sal,
+(select grade from salgrade s where e.sal >= s.losal and e,sal <= s.hisal)
+  from emp e
+ where sal > (select avg(asl) frpm emp)
+ order by sal desc, empno desc;
+ !!!
 
 -- Q3. 249p 
 -- 10번 부서에 근무하는 사원 중 30번 부서에 없는 직책인 사원의 사원 정보, 부서 정보를
@@ -896,6 +909,21 @@ select avg(sal) from emp) and e.deptno = d.deptno
 select * deptno
 not 10, 30);
 
+select job, 10 from emp where deptno = 10
+union all
+select distinct job, 30 from emp where deptno = 30;
+
+select empno, ename, job, deptno, dname, loc
+  from emp
+ join dept d using (deptno)
+ where deptno = 10
+       job not in ( select job
+                    from emp
+                    where deptno = 30);
+                    
+select job from emp where deptno = 30;
+
+!!!
 -- Q4. 249p 
 -- 직책이 SALESMAN인 사람의 최고 급여보다 많이 받는 사원의 사원 정보, 급여 등급 정보를
 -- 오른쪽과 같이 출력하는 SQL 구문을 작성하시오
@@ -912,3 +940,313 @@ select grade
 select max(sal) from emp
  where job = 'SALESMAN')
  order by e.empno asc;
+
+select empno,
+       ename,
+       sal,
+       grade
+  from emp e
+  left outer join salgrade s on(e.sal >= s.losal and e.sal <= s.hisal)
+  where sal > (select max(sal) from emp where job = 'SALESMAN');
+-- sal > all (select dal from emp where job = 'SALESMAN');
+  
+select from emp sal null
+order by sall asc;
+
+select job from emp where job = 'SALES'
+sal in ( 2, 3 )
+order by sal desc;
+
+!!!!
+-- 문제 1.
+-- 커미션이 null인 사원을 급여 오름차순으로 정렬하시오
+select *
+  from comm, sal emp
+ where comm is null
+ order by sal;
+ !
+ 
+-- 문제 2.
+-- 급여 등급 별 사원 수를 등급 오름차순으로 정렬하시오
+-- 단, 모든 등급을 표시한다
+select s.grade, count(*)
+  from emp e, salgrade s
+ where e.sal between s.losal and s.hisal
+ group by s.grade
+ order by s.grade;
+
+-- 문제 3.
+-- 이름, 급여, 급여 등급, 부서 이름 조회
+-- 단, 급여 등급 3 이상만 조회. 급여 등급 내림차순, 급여 등급이 같은 경우 급여 내림 차순
+select e.ename, e.sal, s.grade, d.dname
+  from emp e, salgrade s, dept d
+ where e.sal between s.losal and s.hisal
+       and e. deptno = d.deptno
+       and s.grade >= 3
+ order by s.grade desc, e.sal desc;
+
+-- 문제 4.
+-- 부서명이 SALES인 사원 중 급여 등급이 2 또는 3인 사원을 급여 내림차순으로 정렬
+select *
+  from emp e
+  left outer join dept d using (deptno) -- 괄호 필수
+  left outer join salgrade s on (e.sal >= s.losal and e.sal <= s.hisal)
+ -- where s.grade = 2 or s.grade = 3
+ where s.grade in (2,3)
+       and d.dname = 'SALES'
+ order by e.sal desc;
+
+-------------------------
+desc emp;
+
+drop table emp_ddl;
+create table emp_ddl(
+ empno number(4),
+ ename varchar2(10),
+   job varchar2(9),
+   mgr number(4),
+hiredate date,
+ sal number(7, 2),
+comm number(7, 2),
+deptno number (2));
+desc emp_ddl;
+
+create table dept_ddl
+as select * from dept;
+
+desc dept_ddl;
+select * from dept_ddl;
+
+create table emp_ddl_30
+as select * from emp where deptno = 30;
+
+select * from emp_ddl_30;
+
+create table empdept_ddl
+as select e.empno, e.ename, e.job, e.mgr,e.hiredate,
+          e.sal, e.comm, d.deptno, d.dname, d.loc
+          from emp e, dept d
+          where 1 <> 1;
+          select * from empdept_ddl;
+
+--------------
+-- alter
+create table emp_alter
+as select * from emp;
+select * from emp_alter;
+
+ alter table emp_alter
+   add hp varchar2(20);
+select * from emp_alter;
+
+ table emp_alter
+   add hp varchar2(20); -- barchar로 적으면 자동으로 varchar2로 인식한다
+select * from emp_alter;
+
+  desc emp_alter;
+select * from emp_alter;
+
+alter table emp_alter
+  add age number(3) default 1; -- create table에서도 사용 가능하다
+
+ alter table emp_alter
+rename column fp to tel;
+select * from emp_alter;
+
+ alter table emp_alter
+modify empno number(5);
+  desc emp_alter;
+
+-- 수정할 때 타입의 크기가 커지는 건 가능하지만
+-- 줄어드는 건 불가능하다
+ alter table emp_alter
+modify empno number(4);
+  desc emp_alter;
+
+ alter table emp_alter
+modify empno number(4);
+select * from emp_alter;
+
+ alter table emp_alter
+  drop column tel;
+select * from emp_alter;
+
+ alter table emp_alter
+  drop column age;
+select * from emp_alter;
+
+-- rename
+rename emp_alter to emp_rename;
+
+desc emp_alter;
+
+select *
+  from emp_rename;
+
+-- truncate
+truncate table emp_rename;
+
+select *
+  from emp_rename;
+
+select table emp_rename;
+
+-- drop
+drop table emp_rename;
+
+desc emp_rename;
+
+----- 10장
+create table dept_temp
+as select *
+  from dept;
+select *
+  from dept_temp;
+
+insert into dept_temp (deptno, dname, loc)
+values (50, 'DATDASE', 'SEOUL');
+select *
+  from dept_temp;
+
+insert into dept_temp
+values (60, 'NETWORK', 'BUSAN');
+select *
+  from dept_temp;
+
+insert into dept_temp (deptno, dname, loc)
+values (70, 'WEB', null);
+insert into dept_temp (deptno, dname, loc)
+values (80, 'MOBILE', '');
+select *
+  from dept_temp;
+
+insert into dept_temp(deptno, loc)
+values (90, 'INCHEON');
+select *
+  from dept_temp;
+
+create table emp_temp
+as select *
+  from emp
+ where 1 <> 1;
+select *
+  from emp_temp;
+
+insert into emp_temp (empno, ename, hiredate)
+values (2111, '이순신', to_date('2025-05-21', 'yyyy--mm-dd'));
+select *
+  from emp_temp;
+
+insert into emp_temp(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+values (2111, '이순신', 'MANAGER', 9999, '07/01/2001', 4000, null, 20);
+
+insert into emp_temp(empno, ename, job, mgr, hiredate, sal, comm, deptno)
+values (3111, '심청이', 'MANAGER', 9999, 9999, sysdate, 4000, null, 30);
+select *
+  from emp_temp;
+
+insert into emp_temp(empno, ename, hiredate)
+values (3112, '심청이', sysdate)
+into emp_temp(empno, ename, hiredate)
+values (3113, '심청이', sysdate)
+select * from dual;
+!!!
+insert into emp_temp
+select *
+  from emp where deptno = 10;
+
+---------
+create table dept_temp2
+as select *
+  from dept;
+select *
+  from dept_temp2;
+
+update dept_temp2
+   set loc = 'SEOUL';
+select *
+  from dept_temp2;
+
+-- upsate, delete의
+-- where를 무조건 select에서 검증하고 사용하기
+update dept_temp2
+   set dname = 'DATABASE', loc = 'SEOUL2'
+ where deptno = 40;
+
+select *
+  from dept_temp2
+ where deptno = 40;
+
+select * from dept_temp2;
+
+create table emp_tmp
+as select * from emp;
+select * from emp_tmp;
+
+select sal, sal * 1.03 from emp_tmp
+where sal < 1000;
+
+update emp_tmp
+set sal = sal * 1.03
+where sal < 1000;
+
+select * from emp_tmp
+where sal < 1000;
+
+create table emp_temp2
+as select * from emp;
+select * from emp_temp2;
+
+commit;
+
+delete emp_temp2;
+select * from emp_temp2;
+
+rollback;
+
+delete emp_temp2
+ where deptno = 10;
+select * from emp_temp2;
+
+--
+create table dept_temp
+    as select * from dept;
+select * from dept_temp;
+
+insert into dept_temp (deptno, dname, loc)
+values (50, 'DATABASE', 'SEOUL');
+select * from dept_temp;
+
+insert into dept_temp
+values (60, 'NEWYORK', 'BOSAN');
+select * from dept_temp;
+
+insert into dept_temp (deptno, dname, loc)
+values (70, 'WEB', 'null');
+select * from dept_temp;
+
+insert into dept_temp
+values (80, 'MOBILE', ''); -- null 대신 공백 문자열을 사용할 수 있다
+                           -- 다만, 대부분 null을 선호하고 많이 입력함
+select * from dept_temp;
+
+insert into dept_temp (deptno, loc)
+values (90, 'INCHEON');
+select * from dept_temp;
+
+create table emp_temp
+as select * from emp where 1 <> 1;
+select * from emp_temp;
+
+insert into emp_temp (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+values (9999, '홍길동', 'PRESIDENT', null, 2001/01/01, 5000, 1000, 10);
+select * from emp_temp;
+
+insert into emp_temp (empno, ename, job, mgr, hiredate, sal, comm, deptno)
+values (9999, '홍길동', 'PRESIDENT', null, 01/01/01, 5000, 1000, 10);
+select * from emp_temp;
+--
+
+
+
+
