@@ -1247,6 +1247,129 @@ values (9999, '홍길동', 'PRESIDENT', null, 01/01/01, 5000, 1000, 10);
 select * from emp_temp;
 --
 
+select *
+  from dict;
+
+select *
+  from user_tables;
+
+select *
+  from user_indexes;
+
+create index idx_emp_sal
+    on emp (sal);
+select *
+  from user_ind_columns;
+
+select *
+  from emp
+ where sal > 2000;
+
+select /*+ index(e idx_emp_sal)*/ -- 강제 hint
+    *
+  from emp e
+ where sal = 2000;
+
+!!!!
+create view vw_emp20
+    as (
+select empno, ename, job, deptno
+  from emp
+ where deptno = 20);
+!!!
+
+create sequence seq_dept
+ start with 10000;
+select seq_dept.nextval
+from dual;
+select seq_dept.currval
+from dual;
+
+insert into dept_temp (deptno, dname, loc)
+values (seq_dept.nextval, '테스트', '천안');
+select *
+  from dept_temp;
+
+create table table_pk ( 
+ login_id varchar2(20) primary key,
+ login_pw varchar2(20) not null,
+  tel varchar2(20)
+);
+desc table_pk;
+
+select * from table_pk;
+
+-- 기본 추가
+insert into table_pk
+values ('id', 'pw', 'null');
+insert into table_pk
+values ('id2', 'pw2', 'null');
 
 
+-- 이미 존재하는 거 추가
+insert into table_pk
+values ('id', 'pw', 'null');
+
+-- null 로 추가
+insert into table_pk
+values (null, 'pw', null);
+insert into table_pk
+values ('id3', null, null);
+
+-- null 로 변경
+update table_pk
+set login_id = null
+where login_id = 'id';
+
+-- 이미 존재하는 것으로 변경
+update table_pk
+set login_id = 'id2'
+where login_id = 'id';
+
+create table dept_fk(deptno number(2) constraint deptfk_deptno_pk primary key,
+dname varchar2(14),
+loc varchar2(13)
+);
+desc dept_fk;
+
+create table emp_fk(
+empno number(4) constraint empfk_empno_pk primary key,
+ename varchar2(10),
+deptno number(2) constraint empfk_deptno_fk references dept_fk (deptno));
+desc emp_fk;
+
+primary key(empno),
+foreign key (deptno)
+references dept_fk(deptno)
+);
+
+-- 아직 dept_fk 에 없어서 실패
+select * from emp_fk;
+insert into emp_fk
+values (1000,'이름',10);
+
+insert into dept_fk
+values (10,'부서','위치');
+
+insert into emp_fk
+values (1000,'이름',10);
+select * from emp_fk;
+
+update emp_fk
+set deptno = 20
+where deptno = 10;
+
+update dept_fk
+set deptno = 20
+where deptno = 10;
+
+update dept_fk
+where deptno = 10;
+
+delete emp_fk
+where deptno = 10;
+
+update dept_fk
+set deptno = 20
+where deptno = 10;
 
