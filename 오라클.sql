@@ -1373,3 +1373,12 @@ update dept_fk
 set deptno = 20
 where deptno = 10;
 
+-- 문항 1
+select ename, rpad(substr (empno, 1, 2), length(empno), '*') as ENPMO
+from emp
+order by empno asc;
+
+-- 문항 2
+select e.empno, e.ename, d.dname, d.loc
+from emp e, dept d
+order by d.dname desc, e.ename;
